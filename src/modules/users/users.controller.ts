@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
+import { GetUsersQuery } from './dto/user-query.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -22,8 +23,8 @@ export class UsersController {
   @Get()
   @Permissions('manage_users', 'view_users')
   @ApiOperation({ summary: 'Get all users' })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: GetUsersQuery) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

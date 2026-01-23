@@ -1,112 +1,125 @@
 generator client {
-    provider = "prisma-client-js"
-    output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 model Company {
-    id          String   @id @default(uuid())
-    name        String
-    description String?
-    logoUrl     String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    branches Branch[]
-    roles    Role[]
+  branches Branch[]
+  roles    Role[]
 }
 
 model Branch {
-    id        String   @id @default(uuid())
-    name      String
-    address   String?
-    phone     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    companyId String
-    company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-    users   User[]
-    clients Client[]
+  users   User[]
+  clients Client[]
 }
 
 model User {
-    id        String   @id @default(uuid())
-    name      String
-    lastName  String
-    email     String   @unique
-    password  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String     @id @default(uuid())
+  name      String
+  lastName  String
+  email     String     @unique
+  status    UserStatus @default(ACTIVE)
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-    branchId String
-    branch   Branch @relation(fields: [branchId], references: [id])
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id])
 
-    roles   UserRole[]
-    clients Client[] @relation("UserClients")
+  roles   UserRole[]
+  clients Client[]   @relation("UserClients")
 }
 
 model Role {
-    id          String   @id @default(uuid())
-    name        String
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    companyId String
-    company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-    users       UserRole[]
-    permissions RolePermission[]
+  users       UserRole[]
+  permissions RolePermission[]
 
-    @@unique([name, companyId])
+  @@unique([name, companyId])
 }
 
 model UserRole {
-    userId String
-    roleId String
+  userId String
+  roleId String
 
-    user User @relation(fields: [userId], references: [id])
-    role Role @relation(fields: [roleId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-    @@id([userId, roleId])
+  @@id([userId, roleId])
 }
 
 model Permission {
-    id          String  @id @default(uuid())
-    key         String  @unique
-    description String?
+  id          String  @id @default(uuid())
+  key         String  @unique
+  description String?
 
-    roles RolePermission[]
+  roles RolePermission[]
 }
 
 model RolePermission {
-    roleId       String
-    permissionId String
+  roleId       String
+  permissionId String
 
-    role       Role       @relation(fields: [roleId], references: [id])
-    permission Permission @relation(fields: [permissionId], references: [id])
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
-    @@id([roleId, permissionId])
+  @@id([roleId, permissionId])
 }
 
 model Client {
-    id        String   @id @default(uuid())
-    name      String
-    lastName  String
-    phone     String?
-    email     String?
-    notes     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String       @id @default(uuid())
+  name      String
+  lastName  String
+  status    ClientStatus @default(ACTIVE)
+  phone     String?
+  email     String?
+  notes     String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
-    branchId String
-    branch   Branch @relation(fields: [branchId], references: [id])
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id])
 
-    userId String?
-    user   User?   @relation("UserClients", fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation("UserClients", fields: [userId], references: [id])
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }

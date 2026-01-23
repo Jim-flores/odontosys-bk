@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { ensureExists } from '../../common/utils/error-utils';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import * as bcrypt from "bcrypt";
+import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
+import { ensureExists } from "../../common/utils/error-utils";
+import { GetUsersQuery } from "./dto/user-query.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
@@ -45,31 +46,56 @@ export class UsersService {
     });
   }
 
-  async findAll() {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        lastName: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        branch: true,
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
-                  },
-                },
-              },
-            },
-          },
+  async findAll(query: GetUsersQuery) {
+    const { page, pageSize, search, sortBy, status } = query;
+    const where: any = {
+      ...(status && { status }),
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { lastName: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+      }),
+    };
+
+    // const orderBy =
+    //   sortBy === "lastName"
+    //     ? [{ lastName: order }, { name: order }]
+    //     : { [sortBy]: order };
+
+    const [rows, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          lastName: true,
+          email: true,
+          status: true,
+          createdAt: true,
+          branch: {
+            select: {
+              name: true
+            }
+          }
         },
+        // orderBy,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return {
+      rows,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
       },
-    });
+    };
   }
 
   async findOne(id: string) {
@@ -99,7 +125,7 @@ export class UsersService {
       },
     });
 
-    return ensureExists(user, id, 'User');
+    return ensureExists(user, id, "User");
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -137,8 +163,11 @@ export class UsersService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        ensureExists(null, id, 'User');
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        ensureExists(null, id, "User");
       }
       throw error;
     }
