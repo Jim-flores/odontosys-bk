@@ -12,38 +12,24 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         name: createUserDto.name,
         lastName: createUserDto.lastName,
         email: createUserDto.email,
+        status: createUserDto.status,
         password: hashedPassword,
         branchId: createUserDto.branchId,
       },
-      select: {
-        id: true,
-        name: true,
-        lastName: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        branch: true,
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
     });
+    // Solo el primer rol
+    await this.prisma.userRole.create({
+      data: {
+        userId: user.id,
+        roleId: createUserDto.roles[0]
+      }
+    })
+    return "Usuario creado exitosamente";
   }
 
   async findAll(query: GetUsersQuery) {
@@ -76,9 +62,9 @@ export class UsersService {
           createdAt: true,
           branch: {
             select: {
-              name: true
-            }
-          }
+              name: true,
+            },
+          },
         },
         // orderBy,
         skip: (page - 1) * pageSize,

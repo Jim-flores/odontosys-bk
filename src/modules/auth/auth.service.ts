@@ -49,7 +49,7 @@ export class AuthService {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException("Credenciales Incorrectas");
     }
 
     const permissions = user.roles.flatMap((userRole) =>
@@ -100,25 +100,47 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        lastName: true,
+        email: true,
+        status: true,
+        createdAt: true,
         roles: {
-          include: {
+          select: {
             role: {
-              include: {
+              select: {
+                id: true,
+                name: true,
                 permissions: {
-                  include: {
-                    permission: true,
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        key: true,
+                      },
+                    },
                   },
                 },
               },
             },
           },
         },
-        branch: true,
       },
     });
-
-    const { password: _, ...result } = user;
-    return result;
+    // Many roles supported
+    const roles = user.roles.map((rol) => ({
+      id: rol.role.id,
+      name: rol.role.name,
+    }));
+    // Many permissions by roles not supported yet, only first
+    const permissions = user.roles[0].role.permissions.map((permission) => {
+      return {
+        id: permission.permission.id,
+        key: permission.permission.key,
+      };
+    });
+    return { ...user, roles, permissions };
   }
 }
