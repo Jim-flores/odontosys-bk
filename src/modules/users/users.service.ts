@@ -26,9 +26,9 @@ export class UsersService {
     await this.prisma.userRole.create({
       data: {
         userId: user.id,
-        roleId: createUserDto.roles[0]
-      }
-    })
+        roleId: createUserDto.roles[0],
+      },
+    });
     return "Usuario creado exitosamente";
   }
 
@@ -114,49 +114,60 @@ export class UsersService {
     return ensureExists(user, id, "User");
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const data: any = { ...updateUserDto };
-
+  async updateProfile(id: string, updateUserDto: UpdateUserDto) {
+    const data: UpdateUserDto = { ...updateUserDto };
     if (updateUserDto.password) {
       data.password = await bcrypt.hash(updateUserDto.password, 10);
     }
+    const { roles, ...newData } = data;
+    await this.prisma.user.update({
+      where: { id },
+      data: { ...newData },
+    });
+    if (roles && roles.length > 0) {
+      await this.prisma.userRole.deleteMany({
+        where: { userId: id },
+      });
 
-    try {
-      return await this.prisma.user.update({
-        where: { id },
-        data,
-        select: {
-          id: true,
-          name: true,
-          lastName: true,
-          email: true,
-          createdAt: true,
-          updatedAt: true,
-          branch: true,
-          roles: {
-            include: {
-              role: {
-                include: {
-                  permissions: {
-                    include: {
-                      permission: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
+      await this.prisma.userRole.create({
+        data: {
+          userId: id,
+          roleId: data.roles[0],
         },
       });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2025"
-      ) {
-        ensureExists(null, id, "User");
-      }
-      throw error;
     }
+    return "Datos actualizados correctamente"
+  }
+
+  async update(id: string, data: Omit<UpdateUserDto, "password">) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id },
+        data: {
+          name: data.name,
+          lastName: data.lastName,
+          email: data.email,
+          status: data.status,
+          branchId: data.branchId,
+        },
+      });
+
+      if (data.roles && data.roles.length > 0) {
+        // borrar todos los roles actuales
+        await tx.userRole.deleteMany({
+          where: { userId: id },
+        });
+
+        // crear nuevo rol (solo uno)
+        await tx.userRole.create({
+          data: {
+            userId: id,
+            roleId: data.roles[0],
+          },
+        });
+      }
+    });
+    return "Datos actualizados correctamente";
   }
 
   async remove(id: string) {

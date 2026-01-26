@@ -58,6 +58,10 @@ export class UpdateUserDto {
   @IsEmail()
   email?: string;
 
+  @ApiPropertyOptional({ enum: UserStatus })
+  @IsEnum(UserStatus)
+  status: UserStatus;
+  
   @ApiPropertyOptional({ example: "password123", minLength: 6 })
   @IsOptional()
   @IsString()
@@ -68,4 +72,9 @@ export class UpdateUserDto {
   @IsOptional()
   @IsUUID()
   branchId?: string;
+
+  @ApiPropertyOptional({ example: ["uuid-of-role"] })
+  @IsOptional()
+  @IsArray()
+  roles: string[];
 }
