@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreateBranchDto, UpdateBranchDto } from './dto/branch.dto';
-import { ensureExists } from '../../common/utils/error-utils';
-import { Prisma } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CreateBranchDto, UpdateBranchDto } from "./dto/branch.dto";
+import { ensureExists } from "../../common/utils/error-utils";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class BranchesService {
@@ -23,7 +23,14 @@ export class BranchesService {
       },
     });
   }
-
+  async listBranches() {
+    return this.prisma.branch.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
   async findAll() {
     return this.prisma.branch.findMany({
       include: {
@@ -44,7 +51,7 @@ export class BranchesService {
       },
     });
 
-    return ensureExists(branch, id, 'Branch');
+    return ensureExists(branch, id, "Branch");
   }
 
   async update(id: string, updateBranchDto: UpdateBranchDto) {
@@ -59,8 +66,11 @@ export class BranchesService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        ensureExists(null, id, 'Branch');
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        ensureExists(null, id, "Branch");
       }
       throw error;
     }

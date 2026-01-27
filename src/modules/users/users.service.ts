@@ -4,7 +4,6 @@ import * as bcrypt from "bcrypt";
 import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
 import { ensureExists } from "../../common/utils/error-utils";
 import { GetUsersQuery } from "./dto/user-query.dto";
-import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
@@ -60,11 +59,7 @@ export class UsersService {
           email: true,
           status: true,
           createdAt: true,
-          branch: {
-            select: {
-              name: true,
-            },
-          },
+          branchId: true,
         },
         // orderBy,
         skip: (page - 1) * pageSize,
