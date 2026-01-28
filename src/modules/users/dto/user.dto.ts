@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsObject,
   IsArray,
+  Length,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { UserStatus } from "@prisma/client";
@@ -23,6 +24,21 @@ export class CreateUserDto {
   @ApiProperty({ example: "john@example.com" })
   @IsEmail()
   email: string;
+
+  @ApiProperty({ example: "71123456" })
+  @IsString()
+  @Length(8)
+  dni: string;
+
+  @ApiProperty({ example: "987654321" })
+  @IsString()
+  @Length(9)
+  phone: string;
+
+  @ApiProperty({ example: "Av. Los alamos 123" })
+  @IsString()
+  @IsOptional()
+  address: string;
 
   @ApiProperty({ example: "password123", minLength: 6 })
   @IsString()
@@ -61,7 +77,7 @@ export class UpdateUserDto {
   @ApiPropertyOptional({ enum: UserStatus })
   @IsEnum(UserStatus)
   status: UserStatus;
-  
+
   @ApiPropertyOptional({ example: "password123", minLength: 6 })
   @IsOptional()
   @IsString()

@@ -66,6 +66,8 @@ async function main() {
       name: "Admin",
       lastName: "User",
       email: "admin@example.com",
+      dni: "71000001",
+      phone: "900000000",
       password: hashedPassword,
       branchId: branch.id,
     },
