@@ -17,6 +17,9 @@ export class UsersService {
         lastName: createUserDto.lastName,
         email: createUserDto.email,
         status: createUserDto.status,
+        dni: createUserDto.dni,
+        phone: createUserDto.phone,
+        address: createUserDto.address,
         password: hashedPassword,
         branchId: createUserDto.branchId,
       },
@@ -57,6 +60,9 @@ export class UsersService {
           name: true,
           lastName: true,
           email: true,
+          dni: true,
+          phone: true,
+          address: true,
           status: true,
           createdAt: true,
           branchId: true,
@@ -131,7 +137,7 @@ export class UsersService {
         },
       });
     }
-    return "Datos actualizados correctamente"
+    return "Datos actualizados correctamente";
   }
 
   async update(id: string, data: Omit<UpdateUserDto, "password">) {
@@ -142,6 +148,9 @@ export class UsersService {
           name: data.name,
           lastName: data.lastName,
           email: data.email,
+          dni: data.dni,
+          phone: data.phone,
+          address: data.address,
           status: data.status,
           branchId: data.branchId,
         },

@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { BranchesService } from "./branches.service";
 import { CreateBranchDto, UpdateBranchDto } from "./dto/branch.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { Permissions } from "../../common/decorators/permissions.decorator";
+import { GetBranchQuery } from "./dto/branch-query.dto";
 
 @ApiTags("Branches")
 @Controller("branches")
@@ -38,8 +40,8 @@ export class BranchesController {
   @Get("list")
   @Permissions("manage_company")
   @ApiOperation({ summary: "Get list branches" })
-  listBranches() {
-    return this.branchesService.listBranches();
+  listBranches(@Query() query: GetBranchQuery) {
+    return this.branchesService.listBranches(query);
   }
 
   @Get(":id")

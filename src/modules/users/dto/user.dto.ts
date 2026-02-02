@@ -74,6 +74,21 @@ export class UpdateUserDto {
   @IsEmail()
   email?: string;
 
+  @ApiPropertyOptional({ example: "71123456" })
+  @IsString()
+  @Length(8)
+  dni: string;
+
+  @ApiPropertyOptional({ example: "987654321" })
+  @IsString()
+  @Length(9)
+  phone: string;
+
+  @ApiPropertyOptional({ example: "Av. Los alamos 123" })
+  @IsString()
+  @IsOptional()
+  address: string;
+
   @ApiPropertyOptional({ enum: UserStatus })
   @IsEnum(UserStatus)
   status: UserStatus;

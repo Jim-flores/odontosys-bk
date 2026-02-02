@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
-import { ensureExists } from '../../common/utils/error-utils';
-import { Prisma } from '@prisma/client';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CreateCompanyDto, UpdateCompanyDto } from "./dto/company.dto";
+import { ensureExists } from "../../common/utils/error-utils";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class CompaniesService {
@@ -64,7 +68,20 @@ export class CompaniesService {
       },
     });
 
-    return ensureExists(company, id, 'Company');
+    return ensureExists(company, id, "Company");
+  }
+
+  async getActualCompany() {
+    const company = await this.prisma.company.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        logoUrl: true,
+        createdAt: true,
+      },
+    });
+    return company[0];
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto) {
@@ -86,16 +103,19 @@ export class CompaniesService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        ensureExists(null, id, 'Company');
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        ensureExists(null, id, "Company");
       }
       throw error;
     }
   }
 
-  async remove(id: string) {
-    return this.prisma.company.delete({
-      where: { id },
-    });
-  }
+  // async remove(id: string) {
+  //   return this.prisma.company.delete({
+  //     where: { id },
+  //   });
+  // }
 }
