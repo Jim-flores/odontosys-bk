@@ -1,15 +1,25 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPermissions = this.reflector.getAllAndOverride<string[]>('permissions', [
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
+
+    if (isPublic) {
+      return true; // ignora permisos
+    }
+
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
+      "permissions",
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredPermissions) {
       return true;
@@ -17,6 +27,8 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
 
-    return requiredPermissions.some((permission) => user.permissions?.includes(permission));
+    return requiredPermissions.some((permission) =>
+      user.permissions?.includes(permission),
+    );
   }
 }

@@ -17,9 +17,15 @@ import { Public } from "../../common/decorators/public.decorator";
 
 @ApiTags("Companies")
 @Controller("companies")
-@UseGuards(JwtAuthGuard)
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
+  
+  @Public()
+  @Get('actual')
+  @ApiOperation({ summary: "Get the current company's data" })
+  getActualCompany() {
+    return this.companiesService.getActualCompany();
+  }
 
   @Post()
   @Permissions("manage_company")
@@ -45,12 +51,6 @@ export class CompaniesController {
     return this.companiesService.findOne(id);
   }
 
-  @Public()
-  @Get('actual')
-  @ApiOperation({ summary: "Get the current company's data" })
-  getActualCompany() {
-    return this.companiesService.getActualCompany();
-  }
 
   @Patch('actual')
   @Permissions('manage_company')
