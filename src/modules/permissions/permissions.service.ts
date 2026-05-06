@@ -25,15 +25,19 @@ export class PermissionsService {
   }
 
   async findAll() {
-    return this.prisma.permission.findMany({
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-    });
+    const roles = await this.prisma.role.findMany({
+      select: {
+        id: true,
+        name:true,
+      }
+    })
+    const permission = await this.prisma.permission.findMany({
+      select: {
+        id: true,
+        key: true,
+      }
+    })
+    return { roles, permission }
   }
 
   async findOne(id: string) {

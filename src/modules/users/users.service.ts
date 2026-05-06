@@ -4,6 +4,7 @@ import * as bcrypt from "bcrypt";
 import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
 import { ensureExists } from "../../common/utils/error-utils";
 import { GetUsersQuery } from "./dto/user-query.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
@@ -35,26 +36,29 @@ export class UsersService {
   }
 
   async findAll(query: GetUsersQuery) {
-    const { page, pageSize, search, sortBy, status } = query;
-    const where: any = {
-      ...(status && { status }),
-      ...(search && {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
-        ],
-      }),
-    };
-
-    // const orderBy =
-    //   sortBy === "lastName"
-    //     ? [{ lastName: order }, { name: order }]
-    //     : { [sortBy]: order };
+    const { page, pageSize, search, sortBy, status, sortOrder } = query;
+    const where: Prisma.UserWhereInput = {};
+    if (status && status.length > 0) {
+      where.status = { in: status };
+    }
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { dni: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    let orderBy: Prisma.UserOrderByWithRelationInput = { createdAt: "desc" };
+    if (sortBy) {
+      orderBy = {
+        [sortBy]: sortOrder ?? "asc",
+      };
+    }
 
     const [rows, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         where,
+        orderBy,
         select: {
           id: true,
           name: true,
@@ -66,16 +70,20 @@ export class UsersService {
           status: true,
           createdAt: true,
           branchId: true,
+          roles: true,
         },
-        // orderBy,
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
       this.prisma.user.count({ where }),
     ]);
-
+    // Solo el primer rol de cada usuario
+    const mappedRows = rows.map((user) => ({
+      ...user,
+      roles: user.roles[0].roleId,
+    }));
     return {
-      rows,
+      rows: mappedRows,
       pagination: {
         page,
         pageSize,
@@ -175,8 +183,9 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    return this.prisma.user.delete({
+    await this.prisma.user.delete({
       where: { id },
     });
+    return "Usuario eliminado exitosamente";
   }
 }

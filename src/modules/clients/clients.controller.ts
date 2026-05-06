@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto } from './dto/client.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
+import { GetClientsQuery } from './dto/client-query.dto';
 
 @ApiTags('Clients')
 @Controller('clients')
@@ -22,8 +23,8 @@ export class ClientsController {
   @Get()
   @Permissions('manage_clients', 'view_clients')
   @ApiOperation({ summary: 'Get all clients' })
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query() query: GetClientsQuery) {
+    return this.clientsService.findAll(query);
   }
 
   @Get(':id')

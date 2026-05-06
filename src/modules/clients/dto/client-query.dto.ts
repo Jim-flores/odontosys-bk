@@ -1,8 +1,8 @@
-import { UserStatus } from "@prisma/client";
+import { ClientStatus } from "@prisma/client";
 import { Transform, Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional, IsString, Min } from "class-validator";
 
-export class GetUsersQuery {
+export class GetClientsQuery {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -25,8 +25,8 @@ export class GetUsersQuery {
       return value.split(",").map((v) => v.trim());
     }
   })
-  @IsEnum(UserStatus, { each: true })
-  status?: UserStatus[];
+  @IsEnum(ClientStatus, { each: true })
+  status?: ClientStatus[];
 
   @IsOptional()
   sortBy?: string;
@@ -34,5 +34,4 @@ export class GetUsersQuery {
   @IsOptional()
   @IsEnum(["asc", "desc"])
   sortOrder?: "asc" | "desc";
-  
 }

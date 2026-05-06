@@ -10,6 +10,10 @@ export class CreateClientDto {
   @IsString()
   lastName: string;
 
+  @ApiProperty({example: '71221134'})
+  @IsString()
+  dni: string;
+
   @ApiPropertyOptional({ example: '999999999' })
   @IsOptional()
   @IsString()

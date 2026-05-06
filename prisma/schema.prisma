@@ -38,8 +38,9 @@ model User {
   name      String
   lastName  String
   email     String     @unique
-  dni       String?     @unique 
-  phone     String?     @unique 
+  dni       String?    @unique
+  phone     String?    @unique
+  gender    Gender?
   address   String?
   status    UserStatus @default(ACTIVE)
   password  String
@@ -97,11 +98,14 @@ model RolePermission {
   @@id([roleId, permissionId])
 }
 
+// Modelo cliente con relación a sucursal y usuario (opcional) otros nombres por determinar: Patient, Customer.
 model Client {
   id        String       @id @default(uuid())
   name      String
   lastName  String
   status    ClientStatus @default(ACTIVE)
+  dni       String      @unique
+  gender    Gender?
   phone     String?
   email     String?
   address   String?
@@ -126,4 +130,9 @@ enum ClientStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }

@@ -54,7 +54,7 @@ export class CreateUserDto {
   branchId: string;
 
   @ApiProperty({ example: ["uuid-of-role-1", "uuid-of-role-2"] })
-  @IsObject()
+  @IsArray()
   roles: string[];
 }
 
