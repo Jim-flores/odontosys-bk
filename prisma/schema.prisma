@@ -100,24 +100,76 @@ model RolePermission {
 
 // Modelo cliente con relación a sucursal y usuario (opcional) otros nombres por determinar: Patient, Customer.
 model Client {
-  id        String       @id @default(uuid())
-  name      String
-  lastName  String
-  status    ClientStatus @default(ACTIVE)
-  dni       String      @unique
-  gender    Gender?
-  phone     String?
-  email     String?
-  address   String?
-  notes     String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  name           String
+  lastName       String
+  status         ClientStatus @default(ACTIVE)
+  dni            String       @unique
+  gender         Gender?
+  phone          String       @unique
+  email          String?
+  currentAddress String?
+  birthDate      DateTime?
+  birthPlace     String?
+  religion       String?
+  maritalStatus  String?
+  occupation     String?
+  grade          String?
+  age            Int?
+  // ubigeo         
+  dep            String?
+  prov           String?
+  city           String?
+  //
+  chiefComplaint String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id])
 
-  userId String?
-  user   User?   @relation("UserClients", fields: [userId], references: [id])
+  userId      String?
+  user        User?        @relation("UserClients", fields: [userId], references: [id])
+  antecedent  Antecedent?
+  odontogram Odontogram?
+}
+
+model Antecedent {
+  id                    String   @id @default(uuid())
+  lastAppointment       String?
+  numberOfBrushesPerDay Int?
+  pain                  Boolean
+  painDetails           String?
+  clench                Boolean
+  clenchDetails         String?
+  headache              Boolean
+  headacheDetails       String?
+  medication            Boolean
+  medicationDetails     String?
+  allergies             Boolean
+  allergiesDetails      String?
+  arthritis             Boolean
+  hypertension          Boolean
+  diabetes              Boolean
+  hemorrhage            Boolean
+  cardiovascular        Boolean
+  pregnancy             Boolean
+  others                String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  clientId String @unique
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Odontogram {
+  id        String   @id @default(uuid())
+  details   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clientId String @unique
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 enum UserStatus {
@@ -131,6 +183,7 @@ enum ClientStatus {
   INACTIVE
   SUSPENDED
 }
+
 enum Gender {
   MALE
   FEMALE

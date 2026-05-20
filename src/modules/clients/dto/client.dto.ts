@@ -1,76 +1,86 @@
-import { IsString, IsOptional, IsUUID, IsEmail } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsOptional, IsUUID, IsEmail, IsEnum } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ClientStatus, Gender } from "@prisma/client";
 
 export class CreateClientDto {
-  @ApiProperty({ example: 'Juan' })
+  @ApiProperty({ example: "Juan" })
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'Perez' })
+  @ApiProperty({ example: "Perez" })
   @IsString()
   lastName: string;
 
-  @ApiProperty({example: '71221134'})
+  @ApiProperty({ example: "71221134" })
   @IsString()
   dni: string;
 
-  @ApiPropertyOptional({ example: '999999999' })
+  @ApiPropertyOptional({ example: "999999999" })
   @IsOptional()
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 'client@example.com' })
+  @ApiProperty({ enum: ClientStatus })
+  @IsEnum(ClientStatus)
+  status: ClientStatus;
+
+  @ApiPropertyOptional({ example: "client@example.com" })
   @IsOptional()
   @IsEmail()
   email?: string;
 
-  @ApiPropertyOptional({ example: 'Additional notes' })
+  @ApiPropertyOptional({ example: "Additional notes" })
   @IsOptional()
   @IsString()
   notes?: string;
 
-  @ApiProperty({ example: 'uuid-of-branch' })
+  @ApiProperty({ example: "uuid-of-branch" })
   @IsUUID()
   branchId: string;
 
-  @ApiPropertyOptional({ example: 'uuid-of-user' })
+  @ApiPropertyOptional({ example: "uuid-of-user" })
   @IsOptional()
   @IsUUID()
   userId?: string;
+
+  @ApiProperty({ enum: Gender})
+  @IsEnum(Gender)
+  gender: Gender;
+
 }
 
 export class UpdateClientDto {
-  @ApiPropertyOptional({ example: 'Juan' })
+  @ApiPropertyOptional({ example: "Juan" })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiPropertyOptional({ example: 'Perez' })
+  @ApiPropertyOptional({ example: "Perez" })
   @IsOptional()
   @IsString()
   lastName?: string;
 
-  @ApiPropertyOptional({ example: '999999999' })
+  @ApiPropertyOptional({ example: "999999999" })
   @IsOptional()
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 'client@example.com' })
+  @ApiPropertyOptional({ example: "client@example.com" })
   @IsOptional()
   @IsEmail()
   email?: string;
 
-  @ApiPropertyOptional({ example: 'Additional notes' })
+  @ApiPropertyOptional({ example: "Additional notes" })
   @IsOptional()
   @IsString()
   notes?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-of-branch' })
+  @ApiPropertyOptional({ example: "uuid-of-branch" })
   @IsOptional()
   @IsUUID()
   branchId?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-of-user' })
+  @ApiPropertyOptional({ example: "uuid-of-user" })
   @IsOptional()
   @IsUUID()
   userId?: string;

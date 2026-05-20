@@ -50,8 +50,9 @@ describe('ClientsService', () => {
         phone: '123456789',
         dni: '71221133',
         email: 'john.doe@example.com',
-        notes: 'Test notes',
         branchId: 'branch-id',
+        status: 'ACTIVE',
+        gender: 'MALE',
         userId: 'user-id',
       };
 
@@ -66,7 +67,6 @@ describe('ClientsService', () => {
           dni: createClientDto.dni,
           phone: createClientDto.phone,
           email: createClientDto.email,
-          notes: createClientDto.notes,
           branchId: createClientDto.branchId,
           userId: createClientDto.userId,
         },
