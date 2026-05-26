@@ -5,6 +5,7 @@ import { CreateClientDto, UpdateClientDto } from './dto/client.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { GetClientsQuery } from './dto/client-query.dto';
+import { ResponseMessage } from '@/common/decorators/responseMessage.decorator';
 
 @ApiTags('Clients')
 @Controller('clients')
@@ -16,6 +17,7 @@ export class ClientsController {
   @Post()
   @Permissions('manage_clients')
   @ApiOperation({ summary: 'Create a new client' })
+  @ResponseMessage('Creado correctamente')
   create(@Body() createClientDto: CreateClientDto) {
     return this.clientsService.create(createClientDto);
   }

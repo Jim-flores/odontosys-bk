@@ -31,6 +31,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente presenta dolor",
   })
   @IsBoolean()
+  @IsOptional()
   pain: boolean;
 
   @ApiPropertyOptional({
@@ -46,6 +47,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente aprieta los dientes",
   })
   @IsBoolean()
+  @IsOptional()
   clench: boolean;
 
   @ApiPropertyOptional({
@@ -61,6 +63,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente presenta dolores de cabeza",
   })
   @IsBoolean()
+  @IsOptional()
   headache: boolean;
 
   @ApiPropertyOptional({
@@ -76,6 +79,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente consume medicamentos",
   })
   @IsBoolean()
+  @IsOptional()
   medication: boolean;
 
   @ApiPropertyOptional({
@@ -91,6 +95,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente tiene alergias",
   })
   @IsBoolean()
+  @IsOptional()
   allergies: boolean;
 
   @ApiPropertyOptional({
@@ -106,6 +111,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente tiene artritis",
   })
   @IsBoolean()
+  @IsOptional()
   arthritis: boolean;
 
   @ApiProperty({
@@ -113,6 +119,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente tiene hipertensión",
   })
   @IsBoolean()
+  @IsOptional()
   hypertension: boolean;
 
   @ApiProperty({
@@ -120,6 +127,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente tiene diabetes",
   })
   @IsBoolean()
+  @IsOptional()
   diabetes: boolean;
 
   @ApiProperty({
@@ -127,6 +135,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente presenta hemorragias",
   })
   @IsBoolean()
+  @IsOptional()
   hemorrhage: boolean;
 
   @ApiProperty({
@@ -134,6 +143,7 @@ export class CreateAntecedentDto {
     description: "Indica si el paciente tiene enfermedades cardiovasculares",
   })
   @IsBoolean()
+  @IsOptional()
   cardiovascular: boolean;
 
   @ApiProperty({
@@ -141,6 +151,7 @@ export class CreateAntecedentDto {
     description: "Indica si la paciente está embarazada",
   })
   @IsBoolean()
+  @IsOptional()
   pregnancy: boolean;
 
   @ApiPropertyOptional({

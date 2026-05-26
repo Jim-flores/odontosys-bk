@@ -128,9 +128,9 @@ model Client {
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id])
 
-  userId      String?
-  user        User?        @relation("UserClients", fields: [userId], references: [id])
-  antecedent  Antecedent?
+  userId     String?
+  user       User?       @relation("UserClients", fields: [userId], references: [id])
+  antecedent Antecedent?
   odontogram Odontogram?
 }
 
@@ -138,22 +138,22 @@ model Antecedent {
   id                    String   @id @default(uuid())
   lastAppointment       String?
   numberOfBrushesPerDay Int?
-  pain                  Boolean
+  pain                  Boolean?
   painDetails           String?
-  clench                Boolean
+  clench                Boolean?
   clenchDetails         String?
-  headache              Boolean
+  headache              Boolean?
   headacheDetails       String?
-  medication            Boolean
+  medication            Boolean?
   medicationDetails     String?
-  allergies             Boolean
+  allergies             Boolean?
   allergiesDetails      String?
-  arthritis             Boolean
-  hypertension          Boolean
-  diabetes              Boolean
-  hemorrhage            Boolean
-  cardiovascular        Boolean
-  pregnancy             Boolean
+  arthritis             Boolean?
+  hypertension          Boolean?
+  diabetes              Boolean?
+  hemorrhage            Boolean?
+  cardiovascular        Boolean?
+  pregnancy             Boolean?
   others                String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt

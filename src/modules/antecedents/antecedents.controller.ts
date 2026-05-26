@@ -13,7 +13,7 @@ import { AntecedentsService } from "./antecedents.service";
 import { CreateAntecedentDto } from "./dto/antecedent.dto";
 
 @ApiTags("Antecedents")
-@Controller("Antecedents")
+@Controller("antecedents")
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class AntecedentsController {

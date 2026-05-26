@@ -24,15 +24,15 @@ export class CreateClientDto {
   @IsEnum(ClientStatus)
   status: ClientStatus;
 
+  @ApiPropertyOptional({ example: "AV. Siempre Viva 123" })
+  @IsOptional()
+  @IsString()
+  currentAddress?: string;
+
   @ApiPropertyOptional({ example: "client@example.com" })
   @IsOptional()
   @IsEmail()
   email?: string;
-
-  @ApiPropertyOptional({ example: "Additional notes" })
-  @IsOptional()
-  @IsString()
-  notes?: string;
 
   @ApiProperty({ example: "uuid-of-branch" })
   @IsUUID()
