@@ -10,7 +10,7 @@ export class ClientsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createClientDto: CreateClientDto) {
-    await this.prisma.client.create({
+    const client = await this.prisma.client.create({
       data: {
         name: createClientDto.name,
         lastName: createClientDto.lastName,
@@ -24,7 +24,17 @@ export class ClientsService {
         userId: createClientDto.userId,
       },
     });
-    return "Cliente creado exitosamente";
+    await this.prisma.antecedent.create({
+      data: {
+        clientId: client.id,
+      },
+    });
+    await this.prisma.odontogram.create({
+      data: {
+        clientId: client.id,
+      },
+    });
+    return client;
   }
 
   async findAll(query: GetClientsQuery) {
@@ -82,20 +92,33 @@ export class ClientsService {
     // Por determinar
     const client = await this.prisma.client.findUnique({
       where: { id },
-      include: {
-        branch: true,
-        user: true,
-      },
+    });
+    const antecedent = await this.prisma.antecedent.findUnique({
+      where: { clientId: id },
+    });
+    const odontogram = await this.prisma.odontogram.findUnique({
+      where: { clientId: id },
     });
 
-    return ensureExists(client, id, "Client");
+    ensureExists(client, id, "Client");
+
+    return {
+      information: client,
+      antecedents: antecedent,
+      odontogram: odontogram,
+    };
   }
 
   async update(id: string, updateClientDto: UpdateClientDto) {
     try {
       await this.prisma.client.update({
         where: { id },
-        data: updateClientDto,
+        data: {
+          ...updateClientDto,
+          birthDate: updateClientDto.birthDate
+            ? new Date(updateClientDto.birthDate)
+            : undefined,
+        },
         include: {
           branch: true,
           user: true,
