@@ -34,6 +34,8 @@ async function main() {
     { key: "manage_roles", description: "Manage roles" },
     { key: "manage_clients", description: "Manage clients" },
     { key: "view_clients", description: "View clients" },
+    { key: "manage_appointments", description: "Manage appointments" },
+    { key: "view_appointments", description: "View appointments" },
     { key: "manage_company", description: "Manage company" },
   ];
 

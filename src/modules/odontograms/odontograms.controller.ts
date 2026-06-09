@@ -12,7 +12,7 @@ export class OdontogramsController {
   constructor(private readonly odontogramsService: OdontogramsService) {}
 
   @Patch(":id")
-  @Permissions("manage_odontograms")
+  @Permissions("manage_clients")
   @ApiOperation({ summary: "Update odontogram" })
   patch(@Param("id") id: string, @Body() updateOdontogramDto: object) {
     return this.odontogramsService.patch(id, updateOdontogramDto);

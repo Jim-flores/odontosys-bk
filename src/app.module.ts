@@ -14,6 +14,7 @@ import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
 import { RolesGuard } from "./common/guards/roles.guard";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { OdontogramsModule } from "./modules/odontograms/odontograms.module";
+import { AppointmentsModule } from "./modules/appointments/appointments.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,7 @@ import { OdontogramsModule } from "./modules/odontograms/odontograms.module";
     PermissionsModule,
     AntecedentsModule,
     OdontogramsModule,
+    AppointmentsModule,
   ],
   controllers: [],
   providers: [

@@ -50,6 +50,7 @@ model User {
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id])
 
+  apointments Appointment[]
   roles   UserRole[]
   clients Client[]   @relation("UserClients")
 }
@@ -130,6 +131,7 @@ model Client {
 
   userId     String?
   user       User?       @relation("UserClients", fields: [userId], references: [id])
+  appointments Appointment[]
   antecedent Antecedent?
   odontogram Odontogram?
 }
@@ -172,6 +174,32 @@ model Odontogram {
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
+model Appointment {
+  id              String @id @default(uuid())
+
+  appointmentType AppointmentType
+  status          AppointmentStatus @default(SCHEDULED)
+
+  title           String?
+  notes           String?
+
+  startAt         DateTime
+  endAt           DateTime
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  clientId        String
+  client          Client @relation(fields: [clientId], references: [id])
+
+  userId          String
+  user            User @relation(fields: [userId], references: [id])
+
+  @@index([startAt])
+  @@index([userId, startAt])
+  @@index([clientId])
+}
+
 enum UserStatus {
   ACTIVE
   INACTIVE
@@ -188,4 +216,22 @@ enum Gender {
   MALE
   FEMALE
   OTHER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum AppointmentType {
+  CONSULTATION
+  CLEANING
+  EXTRACTION
+  ENDODONTICS
+  ORTHODONTICS
+  CONTROL
 }
