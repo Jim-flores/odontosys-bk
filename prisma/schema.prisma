@@ -29,8 +29,9 @@ model Branch {
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
-  users   User[]
-  clients Client[]
+  users        User[]
+  clients      Client[]
+  appointments Appointment[]
 }
 
 model User {
@@ -51,8 +52,8 @@ model User {
   branch   Branch @relation(fields: [branchId], references: [id])
 
   apointments Appointment[]
-  roles   UserRole[]
-  clients Client[]   @relation("UserClients")
+  roles       UserRole[]
+  clients     Client[]      @relation("UserClients")
 }
 
 model Role {
@@ -129,11 +130,11 @@ model Client {
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id])
 
-  userId     String?
-  user       User?       @relation("UserClients", fields: [userId], references: [id])
+  userId       String?
+  user         User?         @relation("UserClients", fields: [userId], references: [id])
   appointments Appointment[]
-  antecedent Antecedent?
-  odontogram Odontogram?
+  antecedent   Antecedent?
+  odontogram   Odontogram?
 }
 
 model Antecedent {
@@ -175,28 +176,32 @@ model Odontogram {
 }
 
 model Appointment {
-  id              String @id @default(uuid())
+  id String @id @default(uuid())
 
   appointmentType AppointmentType
   status          AppointmentStatus @default(SCHEDULED)
 
-  title           String?
-  notes           String?
+  title String?
+  notes String?
 
-  startAt         DateTime
-  endAt           DateTime
+  startAt DateTime
+  endAt   DateTime
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  clientId        String
-  client          Client @relation(fields: [clientId], references: [id])
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
-  userId          String
-  user            User @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id])
 
   @@index([startAt])
   @@index([userId, startAt])
+  @@index([branchId, startAt])
   @@index([clientId])
 }
 
