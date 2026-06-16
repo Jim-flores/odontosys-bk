@@ -7,6 +7,7 @@ import {
   CreateAppointmentDto,
   UpdateAppointmentDto,
 } from "./dto/appointment.dto";
+import { CalendarQueryDto } from "./dto/calendar-query.dto";
 
 @Injectable()
 export class AppointmentsService {
@@ -28,6 +29,7 @@ export class AppointmentsService {
         endAt: new Date(createAppointmentDto.endAt),
         clientId: createAppointmentDto.clientId,
         userId: createAppointmentDto.userId,
+        branchId: createAppointmentDto.branchId,
       },
       include: this.defaultInclude,
     });
@@ -218,4 +220,53 @@ export class AppointmentsService {
     client: true,
     user: true,
   } satisfies Prisma.AppointmentInclude;
+
+  // Calendar
+  async findCalendar(query: CalendarQueryDto) {
+    const appointments = await this.prisma.appointment.findMany({
+      where: {
+        startAt: {
+          gte: new Date(query.start),
+          lte: new Date(query.end),
+        },
+      },
+      include: {
+        client: {
+          select: {
+            id: true,
+            name: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        startAt: "asc",
+      },
+    });
+
+    return appointments.map((appointment) => ({
+      id: appointment.id,
+      title: `${appointment.client.name} ${appointment.client.lastName}`,
+      start: appointment.startAt,
+      end: appointment.endAt,
+
+      extendedProps: {
+        status: appointment.status,
+        appointmentType: appointment.appointmentType,
+        clientId: appointment.clientId,
+        userId: appointment.userId,
+      },
+    }));
+  }
+  async move(id: string, dto: CalendarQueryDto) {
+    return this.prisma.appointment.update({
+      where: {
+        id,
+      },
+      data: {
+        startAt: new Date(dto.start),
+        endAt: new Date(dto.end),
+      },
+    });
+  }
 }

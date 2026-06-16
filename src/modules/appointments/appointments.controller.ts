@@ -18,6 +18,7 @@ import {
   UpdateAppointmentDto,
 } from "./dto/appointment.dto";
 import { GetAppointmentsQuery } from "./dto/appointment-query.dto";
+import { CalendarQueryDto } from "./dto/calendar-query.dto";
 
 @ApiTags("Appointments")
 @Controller("appointments")
@@ -62,5 +63,22 @@ export class AppointmentsController {
   @ApiOperation({ summary: "Delete appointment" })
   remove(@Param("id") id: string) {
     return this.appointmentsService.remove(id);
+  }
+  // Calendar 
+  @Get("calendar")
+  @Permissions("manage_appointments", "view_appointments")
+  @ApiOperation({ summary: "Get appointments for calendar view" })
+  findCalendar(@Query() query: CalendarQueryDto) {
+    return this.appointmentsService.findCalendar(query);
+  }
+
+  @Patch(":id/move")
+  @Permissions("manage_appointments")
+  @ApiOperation({ summary: "Move appointment to a new time" })
+  move(
+    @Param("id") id: string,
+    @Body() dto: CalendarQueryDto,
+  ) {
+    return this.appointmentsService.move(id, dto);
   }
 }

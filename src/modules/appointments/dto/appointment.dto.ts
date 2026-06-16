@@ -43,6 +43,10 @@ export class CreateAppointmentDto {
   @ApiProperty({ example: "uuid-of-user" })
   @IsUUID()
   userId: string;
+
+  @ApiProperty({ example: "uuid-of-branch" })
+  @IsUUID()
+  branchId: string;
 }
 
 export class UpdateAppointmentDto {
