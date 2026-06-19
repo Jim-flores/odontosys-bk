@@ -26,7 +26,15 @@ import { CalendarQueryDto } from "./dto/calendar-query.dto";
 @ApiBearerAuth()
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
-
+  
+  // Calendar 
+  @Get("calendar")
+  @Permissions("manage_appointments", "view_appointments")
+  @ApiOperation({ summary: "Get appointments for calendar view" })
+  findCalendar(@Query() query: CalendarQueryDto) {
+    return this.appointmentsService.findCalendar(query);
+  }
+  
   @Post()
   @Permissions("manage_appointments")
   @ApiOperation({ summary: "Create a new appointment" })
@@ -64,14 +72,7 @@ export class AppointmentsController {
   remove(@Param("id") id: string) {
     return this.appointmentsService.remove(id);
   }
-  // Calendar 
-  @Get("calendar")
-  @Permissions("manage_appointments", "view_appointments")
-  @ApiOperation({ summary: "Get appointments for calendar view" })
-  findCalendar(@Query() query: CalendarQueryDto) {
-    return this.appointmentsService.findCalendar(query);
-  }
-
+  // Calendar
   @Patch(":id/move")
   @Permissions("manage_appointments")
   @ApiOperation({ summary: "Move appointment to a new time" })

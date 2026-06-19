@@ -223,11 +223,14 @@ export class AppointmentsService {
 
   // Calendar
   async findCalendar(query: CalendarQueryDto) {
+    console.log(query)
     const appointments = await this.prisma.appointment.findMany({
       where: {
         startAt: {
-          gte: new Date(query.start),
-          lte: new Date(query.end),
+          lt: new Date(query.end),
+        },
+        endAt: {
+          gt: new Date(query.start),
         },
       },
       include: {
