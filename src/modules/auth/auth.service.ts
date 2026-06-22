@@ -107,6 +107,13 @@ export class AuthService {
         email: true,
         status: true,
         createdAt: true,
+        branch: {
+          select: {
+            id: true,
+            name: true,
+          }
+        },
+        branchId: true,
         roles: {
           select: {
             role: {
