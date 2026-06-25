@@ -223,7 +223,7 @@ export class AppointmentsService {
 
   // Calendar
   async findCalendar(query: CalendarQueryDto) {
-    console.log(query)
+    
     const appointments = await this.prisma.appointment.findMany({
       where: {
         startAt: {
@@ -255,6 +255,7 @@ export class AppointmentsService {
 
       extendedProps: {
         status: appointment.status,
+        treatment: appointment.title,
         appointmentType: appointment.appointmentType,
         clientId: appointment.clientId,
         userId: appointment.userId,
