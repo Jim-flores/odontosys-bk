@@ -120,7 +120,7 @@ export class AppointmentsService {
   async findOne(id: string) {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id },
-      include: this.defaultInclude,
+      select: this.listSelect,
     });
 
     return ensureExists(appointment, id, "Appointment");
