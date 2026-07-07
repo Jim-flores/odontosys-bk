@@ -205,6 +205,24 @@ model Appointment {
   @@index([clientId])
 }
 
+model Treatment {
+  id String @id @default(uuid())
+
+  notes String
+
+  // cobro
+  price         Decimal        @default(0) @db.Decimal(10, 2)
+  paid          Decimal        @default(0) @db.Decimal(10, 2)
+  balance       Decimal        @default(0) @db.Decimal(10, 2)
+  paymentStatus PaymentStatus  @default(PENDING)
+  paymentMethod PaymentMethod?
+
+  patientId String
+  doctorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum UserStatus {
   ACTIVE
   INACTIVE
@@ -239,4 +257,18 @@ enum AppointmentType {
   ENDODONTICS
   ORTHODONTICS
   CONTROL
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+}
+
+enum PaymentMethod {
+  CASH
+  YAPE
+  TRANSFER
+  CARD
+  OTHER
 }
