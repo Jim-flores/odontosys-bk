@@ -53,6 +53,7 @@ model User {
 
   apointments Appointment[]
   roles       UserRole[]
+  treatments Treatment[]
   clients     Client[]      @relation("UserClients")
 }
 
@@ -133,6 +134,7 @@ model Client {
   userId       String?
   user         User?         @relation("UserClients", fields: [userId], references: [id])
   appointments Appointment[]
+  treatments   Treatment[]
   antecedent   Antecedent?
   odontogram   Odontogram?
 }
@@ -217,8 +219,11 @@ model Treatment {
   paymentStatus PaymentStatus  @default(PENDING)
   paymentMethod PaymentMethod?
 
-  patientId String
-  doctorId  String
+  clientId String
+  userId  String
+  
+  user User @relation(fields: [userId], references: [id])
+  client Client @relation(fields: [clientId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
