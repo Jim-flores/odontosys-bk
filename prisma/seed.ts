@@ -22,7 +22,7 @@ async function main() {
 
   const branch = await prisma.branch.create({
     data: {
-      name: "Main Branch",
+      name: "Principal",
       address: "123 Main Street",
       phone: "999999999",
       companyId: company.id,
@@ -73,7 +73,11 @@ async function main() {
       dni: "71000001",
       phone: "900000000",
       password: hashedPassword,
-      branchId: branch.id,
+      branches: {
+        connect: {
+          id: branch.id,
+        },
+      },
     },
   });
 

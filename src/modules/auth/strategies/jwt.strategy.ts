@@ -34,7 +34,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             },
           },
         },
-        branch: true,
+        branches: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 

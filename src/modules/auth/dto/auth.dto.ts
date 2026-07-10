@@ -14,5 +14,5 @@ export class RegisterDto {
   lastName: string;
   email: string;
   password: string;
-  branchId: string;
+  branches: string[];
 }

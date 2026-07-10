@@ -28,7 +28,12 @@ export class AuthService {
             },
           },
         },
-        branch: true,
+        branches: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -68,7 +73,7 @@ export class AuthService {
         name: user.name,
         lastName: user.lastName,
         email: user.email,
-        branch: user.branch,
+        branches: user.branches,
       },
       token: this.jwtService.sign(payload),
     };
@@ -83,7 +88,15 @@ export class AuthService {
         lastName: registerDto.lastName,
         email: registerDto.email,
         password: hashedPassword,
-        branchId: registerDto.branchId,
+        ...(registerDto.branches?.length
+          ? {
+              branches: {
+                connect: registerDto.branches.map((branchId) => ({
+                  id: branchId,
+                })),
+              },
+            }
+          : {}),
       },
       select: {
         id: true,
@@ -91,6 +104,12 @@ export class AuthService {
         lastName: true,
         email: true,
         createdAt: true,
+        branches: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -107,13 +126,12 @@ export class AuthService {
         email: true,
         status: true,
         createdAt: true,
-        branch: {
+        branches: {
           select: {
             id: true,
             name: true,
-          }
+          },
         },
-        branchId: true,
         roles: {
           select: {
             role: {
