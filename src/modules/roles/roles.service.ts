@@ -21,8 +21,7 @@ export class RolesService {
           permissionId,
         })),
       };
-    }
-
+    } 
     return this.prisma.role.create({
       data,
       include: {

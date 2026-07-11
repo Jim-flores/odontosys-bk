@@ -15,6 +15,7 @@ import { RolesGuard } from "./common/guards/roles.guard";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { OdontogramsModule } from "./modules/odontograms/odontograms.module";
 import { AppointmentsModule } from "./modules/appointments/appointments.module";
+import { TreatmentModule } from "./modules/treatment/treatment.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,6 +34,7 @@ import { AppointmentsModule } from "./modules/appointments/appointments.module";
     AntecedentsModule,
     OdontogramsModule,
     AppointmentsModule,
+    TreatmentModule,
   ],
   controllers: [],
   providers: [

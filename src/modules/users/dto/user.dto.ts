@@ -49,9 +49,13 @@ export class CreateUserDto {
   @IsEnum(UserStatus)
   status: UserStatus;
 
-  @ApiProperty({ example: "uuid-of-branch" })
-  @IsUUID()
-  branchId: string;
+  @ApiProperty({
+    example: ["uuid-branch-1", "uuid-branch-2"],
+    type: [String],
+  })
+  @IsArray()
+  @IsUUID("4", { each: true })
+  branches: string[];
 
   @ApiProperty({ example: ["uuid-of-role-1", "uuid-of-role-2"] })
   @IsArray()
@@ -99,10 +103,13 @@ export class UpdateUserDto {
   @MinLength(6)
   password?: string;
 
-  @ApiPropertyOptional({ example: "uuid-of-branch" })
-  @IsOptional()
-  @IsUUID()
-  branchId?: string;
+  @ApiProperty({
+    example: ["uuid-branch-1", "uuid-branch-2"],
+    type: [String],
+  })
+  @IsArray()
+  @IsUUID("4", { each: true })
+  branches: string[];
 
   @ApiPropertyOptional({ example: ["uuid-of-role"] })
   @IsOptional()

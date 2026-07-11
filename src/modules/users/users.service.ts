@@ -22,7 +22,15 @@ export class UsersService {
         phone: createUserDto.phone,
         address: createUserDto.address,
         password: hashedPassword,
-        branchId: createUserDto.branchId,
+        ...(createUserDto.branches?.length
+          ? {
+              branches: {
+                connect: createUserDto.branches.map((branchId) => ({
+                  id: branchId,
+                })),
+              },
+            }
+          : {}),
       },
     });
     // Solo el primer rol
@@ -69,7 +77,12 @@ export class UsersService {
           address: true,
           status: true,
           createdAt: true,
-          branchId: true,
+          branches: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
           roles: true,
         },
         skip: (page - 1) * pageSize,
@@ -103,7 +116,12 @@ export class UsersService {
         email: true,
         createdAt: true,
         updatedAt: true,
-        branch: true,
+        branches: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         roles: {
           include: {
             role: {
@@ -131,7 +149,14 @@ export class UsersService {
     const { roles, ...newData } = data;
     await this.prisma.user.update({
       where: { id },
-      data: { ...newData },
+      data: {
+        ...newData,
+        ...(data.branches !== undefined && {
+          branches: {
+            set: data.branches.map((branchId) => ({ id: branchId })),
+          },
+        }),
+      },
     });
     if (roles && roles.length > 0) {
       await this.prisma.userRole.deleteMany({
@@ -160,7 +185,11 @@ export class UsersService {
           phone: data.phone,
           address: data.address,
           status: data.status,
-          branchId: data.branchId,
+          ...(data.branches !== undefined && {
+            branches: {
+              set: data.branches.map((branchId) => ({ id: branchId })),
+            },
+          }),
         },
       });
 
